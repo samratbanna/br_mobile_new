@@ -1,0 +1,73 @@
+import React, {useMemo, useState} from 'react';
+import {Box} from '~/components/ui/box';
+import useTailwindColors from '~/hooks/useThemeColorTailwind';
+import _ from 'lodash';
+import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
+import {useWindowDimensions} from 'react-native';
+import { LeadList } from '.';
+import { useLeadStore } from '~/store/lead.store';
+
+export default () => {
+  const colors = useTailwindColors();
+  const layout = useWindowDimensions();
+  const [index, setIndex] = React.useState(0);
+  
+  const [routes] = useState([
+    {
+      title: 'Bucket',
+      key: 'bucket',
+    },
+    {
+      title: 'Meeting',
+      key: 'meeting',
+    },
+    {
+      title: 'Follow-Up',
+      key: 'followup',
+    },
+    {
+      title: 'Conversion',
+      key: 'conversion',
+    },
+    {
+      title: 'All',
+      key: 'all',
+    },
+  ]);
+
+  const renderScene = useMemo(
+    () =>
+      SceneMap({
+        bucket: () => <LeadList type={'bucket'} extraTabs={false} />,
+        meeting: () => <LeadList type={'meeting'} extraTabs={true} />,
+        followup: () => <LeadList type={'followup'} extraTabs={true} />,
+        conversion: () => <LeadList type={'conversions'} extraTabs={false} />,
+        all: () => <LeadList type={'all'} extraTabs={false} />,
+      }),
+    [],
+  );
+
+  return (
+    <Box className="flex-1 bg-white">
+      <Box className="flex-1 bg-background">
+        <TabView
+          navigationState={{index, routes}}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{width: layout.width, height: layout.height}}
+          renderTabBar={props => (
+            <TabBar
+              {...props}
+              style={{backgroundColor: 'white'}}
+              indicatorStyle={{backgroundColor: colors?.blue}}
+              activeColor={colors?.blue}
+              inactiveColor="black"
+              scrollEnabled
+              tabStyle={{width: 'auto'}}
+            />
+          )}
+        />
+      </Box>
+    </Box>
+  );
+};

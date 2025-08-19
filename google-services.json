@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "169798453297",
+    "project_id": "hingonia-dc266",
+    "storage_bucket": "hingonia-dc266.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169798453297:android:f4b3d195902ce4364e6d10",
+        "android_client_info": {
+          "package_name": "com.anonymous.slboilerplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuOzgFkrAK8GrnjUzR4C9ZGr40AGgdGQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169798453297:android:8ff08b43e2a925a04e6d10",
+        "android_client_info": {
+          "package_name": "in.brainrecoding.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuOzgFkrAK8GrnjUzR4C9ZGr40AGgdGQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169798453297:android:1ce0629037c0cc044e6d10",
+        "android_client_info": {
+          "package_name": "in.matrixedu.mof"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuOzgFkrAK8GrnjUzR4C9ZGr40AGgdGQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169798453297:android:6efbb1bb4d9041134e6d10",
+        "android_client_info": {
+          "package_name": "org.hingonia.managementapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuOzgFkrAK8GrnjUzR4C9ZGr40AGgdGQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1086365116594-1fv9ohe75d32nruj8ajdml0lrmccafpn.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCmk4S_hdUCc32kwo5C49LoBFUhDFcfgO8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1086365116594</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ios.anonymous.slexpo</string>
+	<key>PROJECT_ID</key>
+	<string>schoollog-parents</string>
+	<key>STORAGE_BUCKET</key>
+	<string>schoollog-parents.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1086365116594:ios:d86049e42cd6993223c1ab</string>
+	<key>DATABASE_URL</key>
+	<string>https://schoollog-parents.firebaseio.com</string>
+</dict>
+</plist>
