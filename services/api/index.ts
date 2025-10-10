@@ -1,8 +1,8 @@
 import {create} from 'apisauce';
 import apiMonitor from './Monitor';
 
-// export const BASE_URL = 'https://api.brainrecoding.in/api/r1/';
-export const BASE_URL = 'https://testapi.brainrecoding.in/api/r1/';
+export const BASE_URL = 'https://api.brainrecoding.in/api/r1/';
+// export const BASE_URL = 'https://testapi.brainrecoding.in/api/r1/';
 // export const BASE_URL = 'http://localhost:4000/api/r1/';
 
 let api = create({
@@ -40,8 +40,8 @@ export const URIS = {
   ADD_FOLLOWUP: 'LeadFollowUp',
   STAFFDATA: 'staff',
   DASHBOARD: 'lead/dashboard',
-  PDF: 'uploadTemp/all',
-  VIDEOS: 'uploadTemp/all',
+  PDF: 'uploadTemp/all?isLecture=false',
+  VIDEOS: 'uploadTemp/all?isLecture=true',
   TEAM: 'staff/team',
   TEAM_DASHBOARD: 'lead/team-dashboard',
   UPDATE_TOKEN: 'staff/fcmToken',
@@ -49,5 +49,6 @@ export const URIS = {
   ALL_CALL_LOGS: 'CallLogs/all',
   ADD_CALL_LOGS: 'CallLogs',
   ADD_MEETING_LIST: 'liveMeeting',
-  ALL_TASK: 'tasks/all'
+  ALL_TASK: 'tasks/all',
+  TASK: 'tasks',
 };

@@ -4,7 +4,13 @@ import {Box} from '~/components/ui/box';
 import {Text} from '../ui/text';
 import SelectDropdown from 'react-native-select-dropdown';
 import {LEAD_STATUS_LIST, LeadStatus} from '~/lib/constants';
-import {ChevronDown, Circle, CircleCheck, X} from 'lucide-react-native';
+import {
+  ChevronDown,
+  Circle,
+  CircleCheck,
+  PhoneCall,
+  X,
+} from 'lucide-react-native';
 import {findIndex, size} from 'lodash';
 import {TextInput, TouchableOpacity} from 'react-native';
 import {
@@ -26,6 +32,9 @@ import SegmentedControl from '@react-native-segmented-control/segmented-control'
 import {Followups, LeadDemo} from '~/interfaces/lead.interface';
 import EmptyScreen from '~/app/(app)/(drawer)/screens/emptyScreen';
 import {useSessionContext} from '~/providers/session/ctx';
+import {Icon} from '../navigation/TabBarIcon';
+
+import {Linking} from 'react-native';
 
 export const LeadDetails = () => {
   const {
@@ -79,6 +88,19 @@ export const LeadDetails = () => {
     );
     if (findSelectedIndex > 0) setSelectedIndex(findSelectedIndex);
   }, []);
+
+  const sendWhatsApp = (phoneNumber: string) => {
+    // Ensure phone number is with country code, e.g., +91 for India
+    const url = `whatsapp://send?phone=${phoneNumber}`;
+
+    Linking.openURL(url).catch(() => {
+      alert('Make sure WhatsApp is installed on your device');
+    });
+  };
+  const dialCall = (phoneNumber: string) => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url);
+  };
 
   return (
     <Box className="flex-1 bg-background p-4">
@@ -147,6 +169,19 @@ export const LeadDetails = () => {
           <LeadItemDetails title="referralBy" value={lead?.referralBy} />
         </Box>
         <Box className="mt-4 flex-1">
+          <Box className="flex-row items-center gap-2 self-end py-3">
+            {lead?.contact || lead?.whatsAppNumber ? (
+              <TouchableOpacity onPress={() => dialCall(lead?.contact ? lead?.contact : lead?.whatsAppNumber)}>
+                <Icon size={40} icon="call" />
+              </TouchableOpacity>
+            ) : null}
+            {lead?.whatsAppNumber ? (
+              <TouchableOpacity
+                onPress={() => sendWhatsApp(lead?.whatsAppNumber)}>
+                <Icon size={40} icon="whatsapp" />
+              </TouchableOpacity>
+            ) : null}
+          </Box>
           <Box className="flex-row items-center justify-between">
             <Text className="font-medium text-xl text-main">
               {selectedTab === 0
@@ -673,7 +708,7 @@ const AddDemoModal = ({toggleVisible, setIsVisible, refetch}: any) => {
       </Box>
       <TouchableOpacity
         onPress={_onSubmit}
-        className="items-center rounded-lg bg-main px-4 py-2 mt-2">
+        className="mt-2 items-center rounded-lg bg-main px-4 py-2">
         <Text className="font-semibold text-lg text-white">Add Demo</Text>
       </TouchableOpacity>
 

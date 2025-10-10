@@ -1,60 +1,47 @@
-import React, { useRef, useState } from "react";
-import { View, TouchableOpacity, Text, useWindowDimensions } from "react-native";
-import YoutubePlayer, { YoutubeIframeRef } from "react-native-youtube-iframe";
+import React, {useEffect} from 'react';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {useLocalSearchParams, useRouter} from 'expo-router';
+import YoutubePlayer from 'react-native-youtube-iframe';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import {screenheight, screenWidth} from '~/lib/constants';
+import {ArrowLeft} from 'lucide-react-native';
 
-const YouTubePlayer = ({ videoId }: { videoId: string }) => {
-  const playerRef = useRef<YoutubeIframeRef>(null);
-  const [playing, setPlaying] = useState(false);
-    const { width } = useWindowDimensions(); // Get screen width dynamically
-  
+export default function PlayerScreen() {
+  const router = useRouter();
+  const {id, url} = useLocalSearchParams<{id: string; url: string}>();
+  console.log('id', url);
 
-  const togglePlayPause = (e : string) => {
-    setPlaying(!playing);
-  };
+  useEffect(() => {
+    // Force landscape on enter
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
 
-  const seekForward = async () => {
-    const currentTime = await playerRef.current?.getCurrentTime();
-    playerRef.current?.seekTo((currentTime ?? 0) + 10, true);
-  };
-
-  const seekBackward = async () => {
-    const currentTime = await playerRef.current?.getCurrentTime();
-    playerRef.current?.seekTo((currentTime ?? 0) - 10, true);
-  };
+    return () => {
+      // Restore portrait on exit
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    };
+  }, []);
 
   return (
-    <View className="flex items-center justify-center bg-black p-4">
+    <View style={styles.container}>
       <YoutubePlayer
-        ref={playerRef}
-        height={width*0.5}
-        width={width*0.9}
-        play={playing}
-        videoId={videoId}
-        // onChangeState={(e) => console.log('events---->',e)}
-        initialPlayerParams={{
-          controls: false, // Hides default YouTube controls
-          modestbranding: true,
-          rel: false,
-          iv_load_policy: 3,
-        }}
+        height={screenWidth}
+        width={screenheight}
+        play={true}
+        videoId={id}
       />
-
-      {/* Custom Controls */}
-      {/* <View className="flex flex-row mt-4">
-        <TouchableOpacity onPress={seekBackward} className="bg-red-600 px-4 py-2 mx-2 rounded-lg">
-          <Text className="text-white text-lg">⏪ 10s</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={togglePlayPause} className="bg-red-600 px-6 py-2 mx-2 rounded-lg">
-          <Text className="text-white text-lg">{playing ? "⏸ Pause" : "▶ Play"}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={seekForward} className="bg-red-600 px-4 py-2 mx-2 rounded-lg">
-          <Text className="text-white text-lg">10s ⏩</Text>
-        </TouchableOpacity>
-      </View> */}
+      <TouchableOpacity
+        onPress={() => router.back()}
+        className="absolute top-10 ml-2 rounded-full bg-black p-2">
+        <ArrowLeft color={'white'} />
+      </TouchableOpacity>
     </View>
   );
-};
+}
 
-export default YouTubePlayer;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+  },
+});

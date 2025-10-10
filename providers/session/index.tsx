@@ -11,11 +11,13 @@ import {
 } from '~/services/api';
 import { showErrorToast } from '~/lib/Toast';
 import { useLogin } from '~/services/auth.service';
+import { Task } from '~/interfaces/task.interface';
 
 export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
   const [isLoggedIn, setIsLoggedIn] = useState<any>(false);
   const [isAppReady, setIsAppReady] = useState<boolean>(false);
   const [user, setUser] = useState<any>();
+  const [task, setTask] = useState<Task>();
 
   const logout = useCallback(() => {
     removeSecureValue('access');
@@ -49,8 +51,10 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       setReady,
       user,
       setUser,
+      task,
+      setTask
     }),
-    [isLoggedIn, loginComplete, logout, setReady, isAppReady, user, setUser],
+    [isLoggedIn, loginComplete, logout, setReady, isAppReady, user, setUser, task, setTask],
   );
 
   const {mutate, isPending} = useLogin({

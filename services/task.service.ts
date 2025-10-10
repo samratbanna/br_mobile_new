@@ -43,18 +43,18 @@ export const getAllTasks = (baseParams: Omit<Params, 'page'>) => {
   });
 };
 
-// export const updateStatus = (config: MutationOptions) => {
-//   return useMutation({
-//     mutationKey: [URIS.UPDATE_STATUS],
-//     mutationFn: async (payload: any): Promise<any> => {
-//       const res: any = await apiClient.put(URIS.UPDATE_STATUS, payload, {
-//         params: payload,
-//       });
-//       if (res.ok) {
-//         return res.data;
-//       }
-//       throw res.data;
-//     },
-//     ...config,
-//   });
-// };
+export const updateStatus = (config: MutationOptions) => {
+  return useMutation({
+    mutationKey: [URIS.TASK],
+    mutationFn: async (payload: any): Promise<any> => {
+      const res: any = await apiClient.patch(URIS.TASK, payload, {
+        params: payload,
+      });
+      if (res.ok) {
+        return res.data;
+      }
+      throw res.data;
+    },
+    ...config,
+  });
+};

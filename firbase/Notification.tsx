@@ -1,60 +1,66 @@
 import {Platform} from 'react-native';
-import notifee, { AndroidImportance, AndroidStyle, EventType } from '@notifee/react-native';
+import * as Notifications from 'expo-notifications';
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
-export const NOTIFICATION_CHANNEL_ID = 'SL_APP';
+export const NOTIFICATION_CHANNEL_ID = 'BR_APP';
 export const SUMMARY_ID = 13;
 
-export const RegisterNotificationHandler = () => {
-
-  Platform.OS === 'android' &&
-    notifee.createChannel(
-      {
-        id: NOTIFICATION_CHANNEL_ID, // (required)
-        name: 'Primary Notification Channel', // (required)
-        description:
-          'Primary notification channel to deliver mostly required notifications', // (optional) default: undefined.
-        sound: 'default', // (optional) See `soundName` parameter of `localNotification` function
-        importance: AndroidImportance.DEFAULT, // (optional) default: 4. Int value of the Android notification importance
-        vibration: true, // (optional) default: true. Creates the default vibration patten if true.
-      },
-      // created => {}, // (optional) callback returns whether the channel was created, false means it already existed.
-    );
+export const RegisterNotificationHandler = async () => {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      groupId: NOTIFICATION_CHANNEL_ID,
+      name: 'Primary Notification Channel',
+      importance: Notifications.AndroidImportance.HIGH,
+      sound: 'default',
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
 };
+
 
 const displayNotification = async (remoteMessage : any) => {
   const message = remoteMessage.data;
   const notification = {
     title: message.subject || message.context || 'School Notification',
     body: message.body,
-    
-    // body: 'Main body content of the notification',
-    
     android: {
-      style: { type: AndroidStyle.BIGTEXT, text: message?.body || "-" },
+      style: {text: message?.body || '-'},
       group: message.context,
-      tag: message.context,        
+      tag: message.context,
       channelId: NOTIFICATION_CHANNEL_ID,
-      smallIcon: 'ic_launcher',      
-      importance: AndroidImportance.DEFAULT,
-      // pressAction is needed if you want the notification to open the app when pressed
+      smallIcon: 'ic_notification_icon',
+      importance: Notifications.AndroidImportance.HIGH,
       pressAction: {
         id: 'default',
+        launchApp: false,
       },
     },
-  }
-
-  notifee.onBackgroundEvent(async ({ type, detail } : any) => {
-    if (type === EventType.PRESS) {
-      console.log('User pressed the notification.', detail.pressAction.id, detail);
-    }
-  });
-  sendIt(notification); 
+  };
+if (message.subject) {
+  sendIt(notification);
+}
 };
 
-export const sendIt = (notification : any) => {
+export const sendIt = async (notification: any) => {
   // PushNotification.localNotification(notification);
-  notifee.displayNotification(notification)
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: notification?.title || 'Matrix',
+      body: notification?.body || '',
+      data: notification?.data,
+      sound: 'default',
+    },
+    trigger: null,
+  });
 };
 
 export default {

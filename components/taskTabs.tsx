@@ -4,45 +4,39 @@ import useTailwindColors from '~/hooks/useThemeColorTailwind';
 import _ from 'lodash';
 import {SceneMap, TabBar, TabView} from 'react-native-tab-view';
 import {useWindowDimensions} from 'react-native';
-import { LeadList } from '.';
-import { useLeadStore } from '~/store/lead.store';
+import { TaskList } from './taskList';
 
 export default () => {
   const colors = useTailwindColors();
   const layout = useWindowDimensions();
   const [index, setIndex] = React.useState(0);
-  
+
   const [routes] = useState([
     {
-      title: 'Bucket',
-      key: 'bucket',
+      title: 'In Progress',
+      key: 'inprogress',
     },
     {
-      title: 'Meeting',
-      key: 'meeting',
+      title: 'Pending',
+      key: 'pending',
     },
     {
-      title: 'Follow-Up',
-      key: 'followup',
-    },
-    {
-      title: 'Conversion',
-      key: 'conversion',
+      title: 'Completed',
+      key: 'completed',
     },
     {
       title: 'All',
       key: 'all',
-    },
+    }
   ]);
 
   const renderScene = useMemo(
     () =>
       SceneMap({
-        bucket: () => <LeadList type={'bucket'} extraTabs={false} />,
-        meeting: () => <LeadList type={'meeting'} extraTabs={true} />,
-        followup: () => <LeadList type={'followup'} extraTabs={true} />,
-        conversion: () => <LeadList type={'conversions'} extraTabs={false} />,
-        all: () => <LeadList type={'all'} extraTabs={false} />,
+        inprogress: () => <TaskList type={'IN_PROGRESS'} />,
+        pending: () => <TaskList type={'PENDING'} />,
+        completed: () => <TaskList type={'COMPLETED'} />,
+        all: () => <TaskList type={''} />,
       }),
     [],
   );
@@ -54,7 +48,6 @@ export default () => {
           navigationState={{index, routes}}
           renderScene={renderScene}
           onIndexChange={setIndex}
-          lazy
           initialLayout={{width: layout.width, height: layout.height}}
           renderTabBar={props => (
             <TabBar
@@ -63,7 +56,6 @@ export default () => {
               indicatorStyle={{backgroundColor: colors?.blue}}
               activeColor={colors?.blue}
               inactiveColor="black"
-              scrollEnabled
               tabStyle={{width: 'auto'}}
             />
           )}

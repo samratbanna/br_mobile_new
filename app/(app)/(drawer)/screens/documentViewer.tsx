@@ -19,6 +19,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import {Download, Share2} from 'lucide-react-native';
 import {showErrorToast, showSuccessToast} from '~/lib/Toast';
+import Header from './header';
 // import RNFetchBlob from 'rn-fetch-blob';
 
 export default function DocumentViewer(props: any) {
@@ -149,6 +150,7 @@ export default function DocumentViewer(props: any) {
 
   return (
     <SafeAreaView className="flex-1">
+      <Header title={'Show File'} />
       {props.uri ? null : (
         <Box className="flex-row items-center">
           <Box className="w-[80%] flex-row items-center">
@@ -211,7 +213,6 @@ export default function DocumentViewer(props: any) {
             imageUrls={[{url: params?.uri || props.uri}]} // Array of image objects with URLs
             enableSwipeDown={true} // Optional: Allow swipe-down to close
             backgroundColor="white"
-            
           />
         </Box>
 

@@ -1,6 +1,5 @@
-import {MutationOptions, useMutation, useQuery} from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import {apiClient, URIS} from './api';
-import {showErrorToast, showSuccessToast} from '~/lib/Toast';
 import {compact, values} from 'lodash';
 
 // export const useGetSchool = (config: MutationOptions) => {
@@ -28,7 +27,6 @@ export const getDashboardData = (payload: any) => {
       throw res?.data;
     },
     retry: false,
-    enabled: !!payload?.staffId,
   });
 };
 
@@ -43,7 +41,20 @@ export const getVideos = (payload: any) => {
       throw res?.data;
     },
     retry: false,
-    enabled: !!payload?.staffId,
+  });
+};
+
+export const getPdf = (payload: any) => {
+  return useQuery({
+    queryKey: [URIS.PDF, ...compact(values(payload))],
+    queryFn: async () => {
+      const res: any = await apiClient.get(URIS.PDF, payload);
+      if (res.ok) {
+        return res.data;
+      } else console.log(res);
+      throw res?.data;
+    },
+    retry: false,
   });
 };
 
@@ -58,7 +69,6 @@ export const getMeetings = (payload: any) => {
       throw res?.data;
     },
     retry: false,
-    enabled: !!payload?.staffId,
   });
 };
 

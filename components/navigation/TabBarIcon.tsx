@@ -145,6 +145,9 @@ export const iconRegistry: any = {
   intro1: require('../../assets/images/intro1.jpg'),
   intro2: require('../../assets/images/intro2.jpg'),
   noData: require('../../assets/images/noData.png'),
+  logo: require('../../assets/images/sl-icon.png'),
+  whatsapp: require('../../assets/images/whatsapp.png'),
+  call: require('../../assets/images/call.png'),
 };
 
 const $imageStyle: ImageStyle = {

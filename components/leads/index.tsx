@@ -48,8 +48,9 @@ export const LeadList = ({
     return categorizedLeads[type as keyof typeof categorizedLeads];
   }, [categorizedLeads]);
 
+
   //
-  const {mutate, isPending} = getAllLeads({
+  const {mutate, reset, isPending} = getAllLeads({
     onSuccess: response => {
       if (response && size(response?.docs) > 0) {
         if (page === 1) {
@@ -66,7 +67,7 @@ export const LeadList = ({
     onError: (error: Error) => {},
   });
   //
-  const {mutate: getFollowupLeads, isPending: pending} = getAllFollowupLeads({
+  const {mutate: getFollowupLeads, reset: followupReset, isPending: pending} = getAllFollowupLeads({
     onSuccess: response => {
       if (response && size(response?.docs) > 0) {
         if (page === 1) {
@@ -83,7 +84,7 @@ export const LeadList = ({
     onError: (error: Error) => {},
   });
   //
-  const {mutate: getMeetingLeads, isPending: ispending} = getAllMeetingList({
+  const {mutate: getMeetingLeads, reset: meetingListReset, isPending: ispending} = getAllMeetingList({
     onSuccess: response => {
       if (response && size(response?.docs) > 0) {
         if (page === 1) {
@@ -102,10 +103,13 @@ export const LeadList = ({
 
   useEffect(() => {
     setPage(1);
-  }, [type, myLead]);
+  }, [type, myLead, selectedIndex]);
 
   useEffect(() => {
     if (page === 1) {
+      reset();
+      followupReset();
+      meetingListReset();
       setLeadList(type as keyof typeof categorizedLeads, []);
       setPaginationData(undefined);
     }
@@ -132,12 +136,15 @@ export const LeadList = ({
     if (type === 'meeting') {
       params = {...params, isMeeting: true};
       if (selectedIndex === 0) {
+        reset();
         params = {...params, passed: true};
         getFollowupLeads(params);
       } else if (selectedIndex === 1) {
+        reset();
         params = {...params, today: true};
         getMeetingLeads(params);
       } else if (selectedIndex === 2) {
+        reset();
         params = {...params, upcoming: true};
         getMeetingLeads(params);
       }
@@ -145,10 +152,13 @@ export const LeadList = ({
     if (type === 'followup') {
       params = {...params};
       if (selectedIndex === 0) {
+        reset();
         params = {...params, passed: true};
       } else if (selectedIndex === 1) {
+        reset();
         params = {...params, today: true};
       } else if (selectedIndex === 2) {
+        reset();
         params = {...params, upcoming: true};
       }
       getFollowupLeads(params);
@@ -176,7 +186,7 @@ export const LeadList = ({
           }}
         />
       ) : null}
-      {isPending && page === 1 ? (
+      {(isPending || pending || ispending) && page === 1 ? (
         <CommonLoader />
       ) : size(leadList) > 0 ? (
         <FlatList

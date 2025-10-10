@@ -12,24 +12,25 @@ import {
 } from 'lucide-react-native';
 import Modal from 'react-native-modal';
 import {size} from 'lodash';
-import {useRouter} from 'expo-router';
+import {useFocusEffect, useRouter} from 'expo-router';
 import {useSessionContext} from '~/providers/session/ctx';
 import SelectDropdown from 'react-native-select-dropdown';
 import moment from 'moment';
 import EmptyScreen from '~/app/(app)/(drawer)/screens/emptyScreen';
-import { Task } from '~/interfaces/task.interface';
-import { getAllTasks } from '~/services/task.service';
-import { Box } from './ui/box';
+import {Task} from '~/interfaces/task.interface';
+import {getAllTasks} from '~/services/task.service';
+import {Box} from './ui/box';
+import {useQueryFocusAware} from '~/providers/query/useQueryFocusAware';
 
 export const TASK_STATUS_COLORS = {
   PENDING: '#FFA500',
   IN_PROGRESS: '#007BFF',
   COMPLETED: '#28A745',
   HOLD: '#6C757D',
-  CANCELLED: '#DC3545', 
+  CANCELLED: '#DC3545',
 };
 
-export const TaskList = () => {
+export const TaskList = ({type}) => {
   const {user, logout} = useSessionContext();
 
   const {
@@ -39,7 +40,17 @@ export const TaskList = () => {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = getAllTasks({assignedTo: user?._id, limit: 10});
+    refetch,
+  } = getAllTasks({assignedTo: user?._id, limit: 10, status: type});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+      return () => {
+        refetch();
+      };
+    }, []),
+  );
 
   useEffect(() => {
     if (error && error.status === 401) {
@@ -96,12 +107,12 @@ export const TASK_ICONS = {
 
 const TaskItem = ({item, isLast}: {item: Task; isLast: boolean}) => {
   const router = useRouter();
-  const {setProjectTask} = useSessionContext();
+  const {setTask} = useSessionContext();
   return (
     <TouchableOpacity
       onPress={() => {
-        // setProjectTask(item);
-        // router.push(`/(app)/screens/projectTaskDetail`);
+        setTask(item);
+        router.push(`/(app)/(drawer)/screens/taskDetails`);
       }}
       className={`flex-row items-center border-border1 py-3 ${isLast ? 'border-b-0' : 'border-b-[1px]'}`}>
       <Box
@@ -123,12 +134,8 @@ const TaskItem = ({item, isLast}: {item: Task; isLast: boolean}) => {
             </Text>
           </Text>
         ) : null}
-        <Text className={`text-md font-medium capitalize`}>
-          {item.title}
-        </Text>
-        <Text className={`text-md text-graniteGray capitalize`}>
-          {item.description}
-        </Text>
+        <Text className={`text-md mt-1 font-semibold`}>{item.title}</Text>
+        <Text className={`text-md text-graniteGray`}>{item.description}</Text>
       </Box>
     </TouchableOpacity>
   );
@@ -192,7 +199,7 @@ const FilterModal: React.FC<ModalParams> = ({
         <Text className="mb-1 mt-3 font-semibold">Select Staff</Text>
         <SelectDropdown
           data={staffs || []}
-          onSelect={(selectedItem) => {
+          onSelect={selectedItem => {
             setSelectedStaff(selectedItem);
           }}
           renderButton={() => {
@@ -205,7 +212,7 @@ const FilterModal: React.FC<ModalParams> = ({
               </Box>
             );
           }}
-          renderItem={(action) => {
+          renderItem={action => {
             return (
               <Box className="w-full border-b-[1px] border-border1 bg-white px-2 py-3">
                 <Text
@@ -229,7 +236,7 @@ const FilterModal: React.FC<ModalParams> = ({
         <Text className="mb-1 mt-3 font-semibold">Select Vendor</Text>
         <SelectDropdown
           data={vendors || []}
-          onSelect={(selectedItem) => {
+          onSelect={selectedItem => {
             setSelectedVendor(selectedItem);
           }}
           renderButton={() => {
@@ -244,7 +251,7 @@ const FilterModal: React.FC<ModalParams> = ({
               </Box>
             );
           }}
-          renderItem={(action) => {
+          renderItem={action => {
             return (
               <Box className="w-full border-b-[1px] border-border1 bg-white px-2 py-3">
                 <Text
