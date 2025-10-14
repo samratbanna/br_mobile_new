@@ -13,12 +13,13 @@ import {Image} from 'expo-image';
 import {Text} from '~/components/ui/text';
 import YTPlayerModal from '../screens/ytPlayerModal';
 import { useRouter } from 'expo-router';
+import { RefreshControl } from 'react-native';
 
 export default function UpdatesScreen() {
   const router = useRouter();
   const {user} = useSessionContext();
 
-  const {data: videos, isLoading} = getVideos({
+  const {data: videos, isLoading, refetch, isFetching} = getVideos({
     id: user?._id,
     isLecture: true,
   });
@@ -52,6 +53,9 @@ export default function UpdatesScreen() {
         <Box className="flex-1">
           <FlatList
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+            }
             data={videos}
             renderItem={({item, index}) => (
               <TouchableOpacity
@@ -60,9 +64,9 @@ export default function UpdatesScreen() {
                 {/* Thumbnail */}
                 <Icon
                   icon={getYouTubeThumbnail(item?.videoUrl)}
-                  imgMode="cover"
+                  imgMode="stretch"
                   style={{
-                    height: 183,
+                    height: (Dimensions.get('screen').width * 9) / 16,
                     width: Dimensions.get('screen').width,
                   }}
                 />
@@ -93,7 +97,6 @@ export default function UpdatesScreen() {
       ) : (
         <EmptyScreen title="No Videos" icon="noData" />
       )}
-
     </Box>
   );
 }

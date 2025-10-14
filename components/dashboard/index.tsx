@@ -19,17 +19,18 @@ export const Dashboard = () => {
   const params = useMemo(() => {
     if (user?.role !== 'TRAINER') {
       if (user?.role === 'GROWTH_PARTNER') {
-        return {growthPartnerId: user?._id};
+        return {staffId: user?._id};
       } else {
-        return {teamLeaderId: user?._id};
+        return {staffId: user?._id};
       }
     } else {
-      return {trainerId: user?._id};
+      return {staffId: user?._id};
     }
   }, [user]);
 
-  const {data: teamDashBoardData, isLoading: loading} =
-    getTeamDashboardData(params);
+  const {data: teamDashBoardData, isLoading: loading} = getTeamDashboardData({
+    staffId: user?._id,
+  });
   console.log('teamDashBoardData', teamDashBoardData);
 
   const finalDashboardData = useMemo(() => {

@@ -11,7 +11,7 @@ import {getTwoCharInitials} from '~/lib/constants';
 import useTailwindColors from '~/hooks/useThemeColorTailwind';
 import {Title} from '~/components/title';
 import {Card} from '~/components/card';
-import {getPdf} from '~/services';
+import {getPdf, getRewards} from '~/services';
 import {map, size} from 'lodash';
 
 export default function UpdatesScreen() {
@@ -35,6 +35,7 @@ export const Profile = () => {
         <MyAttendance />
         {/* <Others /> */}
         <Files />
+        <Rewards />
         <Credentials />
       </ScrollView>
     </Box>
@@ -54,6 +55,32 @@ const Files = () => {
             icon="class"
             title={d?.title}
             value={'View File'}
+            onPress={() =>
+              router.push({
+                pathname: '/(app)/(drawer)/screens/documentViewer',
+                params: {uri: d?.image},
+              })
+            }
+          />
+        ))}
+      </Card>
+    </Box>
+  ) : null;
+};
+
+const Rewards = () => {
+  const {data, isLoading} = getRewards({});
+  const router = useRouter();
+  return data && size(data) > 0 ? (
+    <Box className="mt-3">
+      <Title title="Rewards" />
+      <Card customStyle="py-0">
+        {map(data, d => (
+          <CardTab
+            bgColor="lecturesBg"
+            icon="class"
+            title={d?.title}
+            value={'View'}
             onPress={() =>
               router.push({
                 pathname: '/(app)/(drawer)/screens/documentViewer',

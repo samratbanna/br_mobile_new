@@ -32,7 +32,7 @@ export const getDashboardData = (payload: any) => {
 
 export const getVideos = (payload: any) => {
   return useQuery({
-    queryKey: [URIS.VIDEOS, ...compact(values(payload))],
+    queryKey: [URIS.VIDEOS, payload],
     queryFn: async () => {
       const res: any = await apiClient.get(URIS.VIDEOS, payload);
       if (res.ok) {
@@ -49,6 +49,20 @@ export const getPdf = (payload: any) => {
     queryKey: [URIS.PDF, ...compact(values(payload))],
     queryFn: async () => {
       const res: any = await apiClient.get(URIS.PDF, payload);
+      if (res.ok) {
+        return res.data;
+      } else console.log(res);
+      throw res?.data;
+    },
+    retry: false,
+  });
+};
+
+export const getRewards = (payload: any) => {
+  return useQuery({
+    queryKey: [URIS.REWARDS, ...compact(values(payload))],
+    queryFn: async () => {
+      const res: any = await apiClient.get(URIS.REWARDS, payload);
       if (res.ok) {
         return res.data;
       } else console.log(res);

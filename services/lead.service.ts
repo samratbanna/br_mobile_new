@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import {apiClient, URIS} from './api';
 import {CallLogs, Followups, Lead, LeadDemo, LeadResponse} from '~/interfaces/lead.interface';
+import { useRef } from 'react';
 
 interface Payload {
   leadId: string;
@@ -30,11 +31,26 @@ interface getAllLeadConfig
   extends UseMutationOptions<LeadResponse, Error, any> {}
 
 export const getAllLeads = (config: getAllLeadConfig) => {
+  const controllerRef = useRef<AbortController | null>(null);
   return useMutation<LeadResponse, Error, any>({
     mutationKey: [URIS.ALLLEAD],
     mutationFn: async (payload: any): Promise<LeadResponse> => {
-      const res = await apiClient.get(URIS.ALLLEAD, payload);
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      // Create new controller for this request
+      const controller = new AbortController();
+      controllerRef.current = controller;
+
+      const res = await apiClient.get(URIS.ALLLEAD, {
+        ...payload,
+        signal: controller.signal,
+      });
       if (res.ok) {
+        // Clear controller when request finishes
+        controllerRef.current = null;
+
         return res.data as LeadResponse;
       }
       throw res;
@@ -44,11 +60,21 @@ export const getAllLeads = (config: getAllLeadConfig) => {
 };
 
 export const getAllFollowupLeads = (config: getAllLeadConfig) => {
+  const controllerRef = useRef<AbortController | null>(null);
   return useMutation<LeadResponse, Error, any>({
     mutationKey: [URIS.FOLLOWUPS],
     mutationFn: async (payload: any): Promise<LeadResponse> => {
-      const res = await apiClient.get(URIS.FOLLOWUPS, payload);
+      // Create new controller for this request
+      const controller = new AbortController();
+      controllerRef.current = controller;
+
+      const res = await apiClient.get(URIS.FOLLOWUPS, {
+        ...payload,
+        signal: controller.signal,
+      });
       if (res.ok) {
+        // Clear controller when request finishes
+        controllerRef.current = null;
         return res.data as LeadResponse;
       }
       throw res;

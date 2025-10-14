@@ -69,7 +69,7 @@ export const LeadList = ({
   //
   const {mutate: getFollowupLeads, reset: followupReset, isPending: pending} = getAllFollowupLeads({
     onSuccess: response => {
-      if (response && size(response?.docs) > 0) {
+      if (response && response?.docs) {
         if (page === 1) {
           setLeadList(type as keyof typeof categorizedLeads, response?.docs);
         } else {
@@ -107,6 +107,8 @@ export const LeadList = ({
 
   useEffect(() => {
     if (page === 1) {
+      console.log("reset Status");
+      
       reset();
       followupReset();
       meetingListReset();

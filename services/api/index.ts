@@ -41,6 +41,7 @@ export const URIS = {
   STAFFDATA: 'staff',
   DASHBOARD: 'lead/dashboard',
   PDF: 'uploadTemp/all?isLecture=false',
+  REWARDS: 'uploadTemp/all?isAdmin=true',
   VIDEOS: 'uploadTemp/all?isLecture=true',
   TEAM: 'staff/team',
   TEAM_DASHBOARD: 'lead/team-dashboard',
