@@ -54,23 +54,14 @@ export const LeadDetails = () => {
   const [callLogVisible, setcallLogVisible] = useState(false);
   const togglecallLogVisible = () => setcallLogVisible(!callLogVisible);
 
-  const {mutate: udpateLeadStatus, isPending} = updateLead({
-    onSuccess: (response: any) => {
-      updateLeadStatus(
-        selectedCategory,
-        lead?._id,
-        LEAD_STATUS_LIST.at(selectedIndex),
-      );
-      showSuccessToast('status updated');
-    },
-    onError: (error: Error) => {},
-  });
-
   const leadList = useMemo(
     () => categorizedLeads[selectedCategory],
     [isPending],
   );
-  const lead = useMemo(() => leadList.at(selectedLeadIndex), [isPending]);
+  const lead = useMemo(
+    () => leadList.at(selectedLeadIndex),
+    [isPending, selectedLeadIndex],
+  );
 
   const {data: followups, refetch} = getFollowUps({leadId: lead?._id});
   const {data: callLogList, refetch: refetchCallLog} = getAllCallLogList({
@@ -81,13 +72,29 @@ export const LeadDetails = () => {
     isDemo: true,
   });
 
+  const {mutate: udpateLeadStatus, isPending} = updateLead({
+    onSuccess: (response: any) => {
+      const findSelectedIndex = findIndex(
+        LEAD_STATUS_LIST,
+        s => s == response?.status,
+      );
+      console.log('findSelectedIndex', findSelectedIndex);
+      
+      if (findSelectedIndex > 0) setSelectedIndex(findSelectedIndex);
+      updateLeadStatus(selectedCategory, lead?._id, response?.status);
+      refetch();
+      showSuccessToast('status updated');
+    },
+    onError: (error: Error) => {},
+  });
+
   useMemo(() => {
     const findSelectedIndex = findIndex(
       LEAD_STATUS_LIST,
       s => s == lead?.status,
     );
     if (findSelectedIndex > 0) setSelectedIndex(findSelectedIndex);
-  }, []);
+  }, [lead]);
 
   const sendWhatsApp = (phoneNumber: string) => {
     // Ensure phone number is with country code, e.g., +91 for India
@@ -114,7 +121,7 @@ export const LeadDetails = () => {
           onSelect={(selectedItem, index) => {
             udpateLeadStatus({
               id: lead?._id,
-              status: LEAD_STATUS_LIST.at(selectedIndex),
+              status: (LEAD_STATUS_LIST.at(index) || '').replace(/ /g, '_'),
             });
             setSelectedIndex(index);
           }}
@@ -171,7 +178,10 @@ export const LeadDetails = () => {
         <Box className="mt-4 flex-1">
           <Box className="flex-row items-center gap-2 self-end py-3">
             {lead?.contact || lead?.whatsAppNumber ? (
-              <TouchableOpacity onPress={() => dialCall(lead?.contact ? lead?.contact : lead?.whatsAppNumber)}>
+              <TouchableOpacity
+                onPress={() =>
+                  dialCall(lead?.contact ? lead?.contact : lead?.whatsAppNumber)
+                }>
                 <Icon size={40} icon="call" />
               </TouchableOpacity>
             ) : null}
@@ -250,6 +260,8 @@ export const LeadDetails = () => {
           setIsVisible={setIsVisible}
           lead={lead}
           refetch={refetch}
+          updateLeadPending={isPending}
+          udpateLeadStatus={udpateLeadStatus}
         />
       </Modal>
       <Modal
@@ -269,6 +281,8 @@ export const LeadDetails = () => {
           setIsVisible={setDemoVisible}
           lead={lead}
           refetch={refetchDemoList}
+          updateLeadPending={isPending}
+          udpateLeadStatus={udpateLeadStatus}
         />
       </Modal>
       <Modal
@@ -294,7 +308,7 @@ export const LeadDetails = () => {
   );
 };
 
-const FollowUpList = ({followups}: {followups: Followups[]}) => {
+export const FollowUpList = ({followups}: {followups: Followups[]}) => {
   return (
     <Box>
       {followups && size(followups) > 0
@@ -338,7 +352,7 @@ const FollowUpList = ({followups}: {followups: Followups[]}) => {
   );
 };
 
-const DemoList = ({demoList}: {demoList: LeadDemo[]}) => {
+export const DemoList = ({demoList}: {demoList: LeadDemo[]}) => {
   return (
     <Box>
       {demoList && size(demoList) > 0 ? (
@@ -397,7 +411,7 @@ export const callLogStatusColors = {
   BUSY: 'red', // error / busy
 };
 
-const CallLogLists = ({callLogs}: {callLogs: Followups[]}) => {
+export const CallLogLists = ({callLogs}: {callLogs: Followups[]}) => {
   return (
     <Box>
       {callLogs && size(callLogs) > 0 ? (
@@ -448,7 +462,7 @@ const CallLogLists = ({callLogs}: {callLogs: Followups[]}) => {
   );
 };
 
-const LeadItemDetails = ({title, value}: {title: string; value: string}) => {
+export const LeadItemDetails = ({title, value}: {title: string; value: string}) => {
   return value ? (
     <Box className="mb-1 flex-row justify-between">
       <Box className="w-[30%]">
@@ -462,7 +476,8 @@ const LeadItemDetails = ({title, value}: {title: string; value: string}) => {
   ) : null;
 };
 
-const ModalContent = ({toggleVisible, setIsVisible, refetch}: any) => {
+export const ModalContent = ({toggleVisible, udpateLeadStatus, updateLeadPending, refetch}: any) => {
+  const {user} = useSessionContext();
   const {selectedLeadIndex, categorizedLeads} = useLeadStore();
 
   const [isChecked, setIsChecked] = React.useState(false);
@@ -470,14 +485,6 @@ const ModalContent = ({toggleVisible, setIsVisible, refetch}: any) => {
   const [date, setDate] = React.useState<any>();
   const [note, setNote] = React.useState<string>('');
   const {updateLeadStatus, selectedCategory} = useLeadStore();
-
-  const {mutate: udpateLeadStatus, isPending: updateLeadPending} = updateLead({
-    onSuccess: (response: any) => {
-      refetch();
-      updateLeadStatus(selectedCategory, lead?._id, 'MED_FOLLOWUP');
-    },
-    onError: (error: Error) => {},
-  });
 
   const leadList = useMemo(
     () => categorizedLeads[selectedCategory],
@@ -506,7 +513,7 @@ const ModalContent = ({toggleVisible, setIsVisible, refetch}: any) => {
   };
 
   const _onSubmit = () => {
-    let params: any = {leadId: lead?._id, remark: note};
+    let params: any = {leadId: lead?._id, remark: note, assignedTo: user?._id};
     if (isChecked) {
       if (date) {
         params = {...params, follow: true, dateTime: date.toDate()};
@@ -587,7 +594,7 @@ const ModalContent = ({toggleVisible, setIsVisible, refetch}: any) => {
   );
 };
 
-const AddDemoModal = ({toggleVisible, setIsVisible, refetch}: any) => {
+export const AddDemoModal = ({toggleVisible, udpateLeadStatus, updateLeadPending, refetch}: any) => {
   const {selectedLeadIndex, categorizedLeads} = useLeadStore();
   const {user} = useSessionContext();
   const [isChecked, setIsChecked] = React.useState(false);
@@ -597,14 +604,6 @@ const AddDemoModal = ({toggleVisible, setIsVisible, refetch}: any) => {
   const [title, setTitle] = React.useState<string>('');
   const [link, setLink] = React.useState<string>('');
   const {updateLeadStatus, selectedCategory} = useLeadStore();
-
-  const {mutate: udpateLeadStatus, isPending: updateLeadPending} = updateLead({
-    onSuccess: (response: any) => {
-      refetch();
-      updateLeadStatus(selectedCategory, lead?._id, 'MED_FOLLOWUP');
-    },
-    onError: (error: Error) => {},
-  });
 
   const leadList = useMemo(
     () => categorizedLeads[selectedCategory],
@@ -642,6 +641,7 @@ const AddDemoModal = ({toggleVisible, setIsVisible, refetch}: any) => {
         meetingtype: 'ONLINE',
         isDemo: true,
         assignedTo: user?._id,
+        staffId: user?._id,
         dateTime: date?.format('YYYY-MM-DD'),
         time: date?.format('hh:mm a'),
       };
@@ -722,7 +722,7 @@ const AddDemoModal = ({toggleVisible, setIsVisible, refetch}: any) => {
   );
 };
 
-const AddCallLogModal = ({toggleVisible, setIsVisible, refetch}: any) => {
+export const AddCallLogModal = ({toggleVisible, setIsVisible, refetch}: any) => {
   const {selectedLeadIndex, categorizedLeads} = useLeadStore();
   const {user} = useSessionContext();
   const [showPicker, setShowPicker] = React.useState(false);

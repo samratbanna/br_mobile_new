@@ -229,6 +229,8 @@ export const LeadList = ({
 };
 
 const LeadItem: React.FC<{lead: Lead, _onPress: () => void}> = ({lead, _onPress}) => {
+  console.log('lead', lead, lead?.status);
+  
   const router = useRouter();
   const {user} = useSessionContext();
   const isSelfLead = lead?.staffId?._id === user?._id;

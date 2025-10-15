@@ -178,6 +178,20 @@ export const getAllDemoList = (payload: Payload) => {
   });
 };
 
+export const getLead = (payload: {id: string}) => {
+  return useQuery<Lead, Error, Lead, [string, {id: string}]>({
+    queryKey: [URIS.LEAD, payload],
+    queryFn: async (): Promise<Lead> => {
+      const res = await apiClient.get(URIS.LEAD, payload);
+      if (res.ok) {
+        return res.data as Lead;
+      }
+      throw res?.data;
+    },
+    retry: false,
+  });
+};
+
 export const getAllCallLogList = (payload: Payload) => {
   return useQuery<CallLogs[], Error, CallLogs[], [string, Payload]>({
     queryKey: [URIS.ALL_CALL_LOGS, payload],

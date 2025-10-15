@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import {useSessionContext} from '~/providers/session/ctx';
-import {
-  getTwoCharInitials,
-} from '~/lib/constants';
+import {getTwoCharInitials} from '~/lib/constants';
 import moment from 'moment';
 import {
   Ban,
@@ -12,16 +10,15 @@ import {
   Clock,
   Loader,
 } from 'lucide-react-native';
-import {
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {ActivityIndicator, ScrollView, TouchableOpacity} from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown';
-import { TASK_STATUS_COLORS } from './taskList';
-import { Box } from './ui/box';
-import { Text } from './ui/text';
-import { updateStatus } from '~/services/task.service';
-import { showSuccessToast } from '~/lib/Toast';
+import {TASK_STATUS_COLORS} from './taskList';
+import {Box} from './ui/box';
+import {Text} from './ui/text';
+import {updateStatus} from '~/services/task.service';
+import {showSuccessToast} from '~/lib/Toast';
+import {getLead} from '~/services/lead.service';
+import {useRouter} from 'expo-router';
 
 const TASK_ICONS = {
   PENDING: (
@@ -38,13 +35,14 @@ const TASK_ICONS = {
   ),
 };
 export const TaskDetail = () => {
+  const router = useRouter();
   const [comment, setComment] = useState();
-  const {task, user, setTask} = useSessionContext();
-  
+  const {task, user, setTask, lead, setLead} = useSessionContext();
+
   const {mutate: updateStatusAction, isPending: pending} = updateStatus({
     onSuccess: response => {
       console.log('response', response);
-      showSuccessToast("Task status updated")
+      showSuccessToast('Task status updated');
       setTask({...task, status: response?.status});
     },
     onError: (error: Error) => {
@@ -55,6 +53,10 @@ export const TaskDetail = () => {
   const _onHandleStatusChange = (status: string) => {
     updateStatusAction({status, id: task?._id});
   };
+
+  const {data, isLoading} = getLead({
+    id: task?.leadId,
+  });
 
   return (
     <ScrollView>
@@ -102,44 +104,42 @@ export const TaskDetail = () => {
           <Box className="mt-8 flex-row items-center justify-between border-b-[0px] border-border1 pb-4">
             <TouchableOpacity
               onPress={() => {
-                  // toggleDateVisible();
+                // toggleDateVisible();
               }}
               className="flex-1 flex-row items-center">
-              {/* <Box className="self-center rounded-full border-[1px] border-border1 p-2.5">
+              <Box className="self-center rounded-full border-[1px] border-border1 p-2.5">
                 <CalendarDays size={20} strokeWidth={1} color={'red'} />
               </Box>
               <Box className="ml-2 flex-1">
                 <Text className="font-medium text-grey">Due Date At</Text>
-                {isPending ? (
-                  <ActivityIndicator size={'large'} />
-                ) : (
-                  <Text className="text-md font-semibold text-red">
-                    {projectTask.dueDate
-                      ? moment(projectTask.dueDate).format('DD MMM, YYYY')
-                      : '-'}
-                  </Text>
-                )}
-              </Box> */}
+                <Text className="text-md font-semibold text-red">
+                  {task.dueDate
+                    ? moment(task.dueDate).format('DD MMM, YYYY')
+                    : '-'}
+                </Text>
+              </Box>
             </TouchableOpacity>
             <Box className="flex-1 flex-row items-center">
               <Box
                 style={{
-                  borderColor:
-                    TASK_STATUS_COLORS[task?.status || 'PENDING'],
+                  borderColor: TASK_STATUS_COLORS[task?.status || 'PENDING'],
                 }}
                 className={`self-center rounded-full p-2.5`}>
                 {TASK_ICONS[task?.status]}
               </Box>
               <Box className="ml-2 flex-1">
                 <Text className="font-medium text-grey">Current Status</Text>
-                {task.status === 'CANCELLED' ||
-                task.status === 'COMPLETED' ? (
-                  <Text className="text-md font-semibold">
-                    {task.status}
-                  </Text>
+                {task.status === 'CANCELLED' || task.status === 'COMPLETED' ? (
+                  <Text className="text-md font-semibold">{task.status}</Text>
                 ) : (
                   <SelectDropdown
-                    data={['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'HOLD']}
+                    data={[
+                      'PENDING',
+                      'IN_PROGRESS',
+                      'COMPLETED',
+                      'CANCELLED',
+                      'HOLD',
+                    ]}
                     onSelect={(selectedItem, index) => {
                       _onHandleStatusChange(selectedItem);
                       // onChange(selectedItem);
@@ -180,6 +180,22 @@ export const TaskDetail = () => {
             </Box>
           </Box>
         </Box>
+        {task?.leadId ? (
+          <TouchableOpacity
+            onPress={() => {
+              setLead(data);
+              router.push('/screens/leadDetailFromTask');
+            }}
+            className="mx-4 flex-1 items-center justify-between rounded-lg bg-blue px-4 py-3">
+            {isLoading ? (
+              <ActivityIndicator color={'white'} />
+            ) : (
+              <Text className="font-semibold text-white">
+                View Associated Lead
+              </Text>
+            )}
+          </TouchableOpacity>
+        ) : null}
       </Box>
     </ScrollView>
   );

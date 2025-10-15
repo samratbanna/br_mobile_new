@@ -12,12 +12,14 @@ import {
 import { showErrorToast } from '~/lib/Toast';
 import { useLogin } from '~/services/auth.service';
 import { Task } from '~/interfaces/task.interface';
+import { Lead } from '~/interfaces/lead.interface';
 
 export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
   const [isLoggedIn, setIsLoggedIn] = useState<any>(false);
   const [isAppReady, setIsAppReady] = useState<boolean>(false);
   const [user, setUser] = useState<any>();
   const [task, setTask] = useState<Task>();
+  const [lead, setLead] = useState<Lead>();
 
   const logout = useCallback(() => {
     removeSecureValue('access');
@@ -52,9 +54,23 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       user,
       setUser,
       task,
-      setTask
+      setTask,
+      lead,
+      setLead,
     }),
-    [isLoggedIn, loginComplete, logout, setReady, isAppReady, user, setUser, task, setTask],
+    [
+      isLoggedIn,
+      loginComplete,
+      logout,
+      setReady,
+      isAppReady,
+      user,
+      setUser,
+      task,
+      setTask,
+      lead,
+      setLead,
+    ],
   );
 
   const {mutate, isPending} = useLogin({
