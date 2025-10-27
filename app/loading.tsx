@@ -1,22 +1,27 @@
-import {useRouter} from 'expo-router';
+import {useLocalSearchParams, useRouter} from 'expo-router';
 import moment from 'moment';
 import React, {useEffect} from 'react';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
-import { Text } from '~/components/ui/text';
-import { useFirebase } from '~/firbase';
+import {Text} from '~/components/ui/text';
+import {useFirebase} from '~/firbase';
 import {useSessionContext} from '~/providers/session/ctx';
-import { getSecureValue, removeSecureValue } from '~/services/secure-store.service';
+import { updateFcmToken } from '~/services/auth.service';
+import {
+  getSecureValue,
+  removeSecureValue,
+} from '~/services/secure-store.service';
 
 const LoadingScreen = () => {
-  const {setReady,setSettings, setActiveStudent, setUser, setSchool, logout , loginComplete , setSessions , setStudents  , setActiveSession , activeSession} =
-    useSessionContext();
+  const {
+    setReady,
+    user,
+  } = useSessionContext();
   const router = useRouter();
 
-  // const [fcmToken] : any =  useFirebase();
   useEffect(() => {
     setReady();
     router.navigate('/');
-  },[])
+  }, []);
   return (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#024C9D" />

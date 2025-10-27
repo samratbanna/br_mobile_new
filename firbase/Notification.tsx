@@ -54,7 +54,7 @@ export const sendIt = async (notification: any) => {
   // PushNotification.localNotification(notification);
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: notification?.title || 'Matrix',
+      title: notification?.title || 'BR Business',
       body: notification?.body || '',
       data: notification?.data,
       sound: 'default',

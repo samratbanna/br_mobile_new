@@ -30,3 +30,18 @@ export const useLogout = (config: MutationOptions) => {
     ...config,
   });
 };
+
+
+export const updateFcmToken = (config: MutationOptions) => {
+  return useMutation<any, Error, any>({
+    mutationKey: [URIS.UPDATE_TOKEN],
+    mutationFn: async (payload: any): Promise<any> => {
+      const res = await apiClient.patch(URIS.UPDATE_TOKEN, payload);
+      if (res.ok) {
+        return res.data;
+      }
+      throw res;
+    },
+    ...config,
+  });
+};

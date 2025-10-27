@@ -17,6 +17,8 @@ import QueryProvider from '~/providers/query/query-client.provider';
 import {toastConfig} from '../lib/Toast';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {BottomSheetProvider} from '~/components/BottomSheetProvider';
+import messaging from '@react-native-firebase/messaging';
+import { backgroundNotificationHandler } from '~/firbase/backGroundService';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -51,8 +53,8 @@ export default function RootLayout() {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-    // messaging().setBackgroundMessageHandler(backgroundNotificationHandler);
-    // messaging().onMessage(backgroundNotificationHandler);
+    messaging().setBackgroundMessageHandler(backgroundNotificationHandler);
+    messaging().onMessage(backgroundNotificationHandler);
   }, [loaded]);
 
   useEffect(() => {
