@@ -2,7 +2,7 @@
   "expo": {
     "name": "BR Business App",
     "slug": "br-businessapp",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./assets/images/sl-icon.png",
@@ -14,7 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "4",
+      "buildNumber": "5",
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.slexpo",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -32,7 +32,7 @@
       },
       "package": "in.brainrecoding.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "bundler": "metro",

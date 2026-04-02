@@ -52,7 +52,7 @@ export default function NotificationScreen() {
             onEndReachedThreshold={0.5}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={() => (
-              <EmptyScreen title="No Projects" icon="noData" />
+              <EmptyScreen title="No Notification" icon="noData" />
             )}
             ListFooterComponent={
               isFetchingNextPage ? <ActivityIndicator /> : null
@@ -60,7 +60,6 @@ export default function NotificationScreen() {
           />
         )}
       </Box>
-      <EmptyScreen title="No Notifications" icon="noData" />
     </Box>
   );
 }
