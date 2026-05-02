@@ -116,6 +116,7 @@ export const LeadList = ({
       setPaginationData(undefined);
     }
     let params: any = {
+      userRole: user?.role?.name,
       staffId: user?._id,
       isPopulate: true,
       page,
@@ -277,8 +278,7 @@ const LeadItem: React.FC<{lead: Lead, _onPress: () => void}> = ({lead, _onPress}
           ) : null}
         </Box>
 
-        {isSelfLead ? null : user?.role === 'GROWTH_PARTNER' &&
-          lead?.districtManagerId ? (
+        {lead?.districtManagerId ? (
           <Box className="flex-row items-center justify-between pr-3">
             <Text>Team Leader</Text>
             <Text numberOfLines={1} className="text-graniteGray">
@@ -286,7 +286,7 @@ const LeadItem: React.FC<{lead: Lead, _onPress: () => void}> = ({lead, _onPress}
             </Text>
           </Box>
         ) : null}
-        {isSelfLead ? null : lead?.staffId ? (
+        {lead?.staffId ? (
           <Box className="flex-row items-center justify-between pr-3">
             <Text>{lead?.districtManagerId ? 'Trainer' : 'Team Leader'}</Text>
             <Text numberOfLines={1} className="text-graniteGray">

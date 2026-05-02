@@ -185,9 +185,9 @@ export const LeadDetails = () => {
                 <Icon size={40} icon="call" />
               </TouchableOpacity>
             ) : null}
-            {lead?.whatsAppNumber ? (
+            {lead?.whatsAppNumber || lead?.contact ? (
               <TouchableOpacity
-                onPress={() => sendWhatsApp(lead?.whatsAppNumber)}>
+                onPress={() => sendWhatsApp(lead?.whatsAppNumber || lead?.contact)}>
                 <Icon size={40} icon="whatsapp" />
               </TouchableOpacity>
             ) : null}
