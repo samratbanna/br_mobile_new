@@ -20,6 +20,7 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
   const [user, setUser] = useState<any>();
   const [task, setTask] = useState<Task>();
   const [lead, setLead] = useState<Lead>();
+  const [onlyMyLead, setOnlyMyLead] = useState(false);
 
   const logout = useCallback(() => {
     removeSecureValue('access');
@@ -57,6 +58,8 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       setTask,
       lead,
       setLead,
+      onlyMyLead,
+      setOnlyMyLead,
     }),
     [
       isLoggedIn,
@@ -70,6 +73,8 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       setTask,
       lead,
       setLead,
+      onlyMyLead,
+      setOnlyMyLead,
     ],
   );
 

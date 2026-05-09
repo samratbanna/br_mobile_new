@@ -6,6 +6,8 @@ import {
   FlatList,
   RefreshControl,
   TouchableOpacity,
+  TextInput,
+  View,
 } from 'react-native';
 import {Text} from '~/components/ui/text';
 import moment from 'moment';
@@ -23,6 +25,8 @@ import EmptyScreen from '~/app/(app)/(drawer)/screens/emptyScreen';
 import {Switch} from 'react-native-gesture-handler';
 import {useRouter} from 'expo-router';
 import {useLeadStore} from '~/store/lead.store';
+import SelectDropdown from 'react-native-select-dropdown';
+import {ChevronDown} from 'lucide-react-native';
 
 export const LeadList = ({
   type,
@@ -31,12 +35,14 @@ export const LeadList = ({
   type: string;
   extraTabs: boolean;
 }) => {
+  const {onlyMyLead, setOnlyMyLead} = useSessionContext();
   const router = useRouter();
-  const [myLead, setMyLead] = useState(false);
   const [page, setPage] = useState(1);
   const {user} = useSessionContext();
   const [paginationData, setPaginationData] = useState<any>();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [searchName, setSearchName] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('all');
   const {
     categorizedLeads,
     setLeadList,
@@ -103,12 +109,10 @@ export const LeadList = ({
 
   useEffect(() => {
     setPage(1);
-  }, [type, myLead, selectedIndex]);
+  }, [type, onlyMyLead, selectedIndex, searchName, selectedStatus]);
 
   useEffect(() => {
     if (page === 1) {
-      console.log("reset Status");
-      
       reset();
       followupReset();
       meetingListReset();
@@ -122,8 +126,11 @@ export const LeadList = ({
       page,
       limit: 20,
     };
-    if (myLead) {
+    if (onlyMyLead) {
       params = {...params, myLeads: true};
+    }
+    if (searchName) {
+      params = {...params, ownerName: searchName};
     }
     if (type === 'bucket') {
       params = {...params, isBucket: true};
@@ -154,6 +161,9 @@ export const LeadList = ({
     }
     if (type === 'followup') {
       params = {...params};
+      if (selectedStatus !== 'all') {
+        params = {...params, status: selectedStatus};
+      }
       if (selectedIndex === 0) {
         reset();
         params = {...params, passed: true};
@@ -166,19 +176,76 @@ export const LeadList = ({
       }
       getFollowupLeads(params);
     }
-  }, [page, type, selectedIndex, myLead]);
+  }, [page, type, selectedIndex, onlyMyLead, searchName, selectedStatus]);
 
   return (
     <Box className="flex-1 bg-background p-4">
       <Box style={{alignItems: 'flex-end'}}>
         <Switch
           trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={myLead ? '#f5dd4b' : '#white'}
-          onValueChange={() => setMyLead(!myLead)}
-          value={myLead}
+          thumbColor={onlyMyLead ? '#f5dd4b' : '#white'}
+          onValueChange={() => setOnlyMyLead(!onlyMyLead)}
+          value={onlyMyLead}
         />
         <Text>Only My Leads</Text>
       </Box>
+      <TextInput
+        placeholder="Search by name"
+        value={searchName}
+        onChangeText={setSearchName}
+        className="mt-3 px-3 py-2 rounded-lg border border-border1 text-base"
+        style={{
+          borderWidth: 1,
+          borderColor: '#e0e0e0',
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          borderRadius: 8,
+          fontSize: 16,
+        }}
+      />
+      {type === 'followup' ? (
+        <SelectDropdown
+          data={[
+            {label: 'All', value: 'all'},
+            {label: 'HIGH_FOLLOWUP', value: 'HIGH_FOLLOWUP'},
+            {label: 'MID_FOLLOWUP', value: 'MID_FOLLOWUP'},
+            {label: 'LOW_FOLLOWUP', value: 'LOW_FOLLOWUP'},
+          ]}
+          onSelect={selectedItem => {
+            setSelectedStatus(selectedItem.value);
+          }}
+          renderButton={() => {
+            return (
+              <Box className="mt-3 flex-row items-center justify-between rounded-lg border-[1px] border-input bg-white p-3">
+                <Text className="pl-1 font-medium text-lg text-graniteGray">
+                  {selectedStatus === 'all' ? 'All' : selectedStatus}
+                </Text>
+                <ChevronDown size={20} color={'#A4A4A5'} />
+              </Box>
+            );
+          }}
+          renderItem={item => {
+            return (
+              <Box className="w-full border-b-[1px] border-border1 bg-white px-2 py-3">
+                <Text
+                  style={{
+                    flex: 1,
+                    fontSize: 16,
+                    fontFamily: 'Poppins',
+                    color: '#151E26',
+                  }}>
+                  {item.label}
+                </Text>
+              </Box>
+            );
+          }}
+          showsVerticalScrollIndicator={false}
+          dropdownStyle={{
+            backgroundColor: '#E9ECEF',
+            borderRadius: 8,
+          }}
+        />
+      ) : null}
       {extraTabs ? (
         <SegmentedControl
           style={{marginTop: 10}}
