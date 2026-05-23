@@ -15,7 +15,6 @@ import {
   UserRound,
   YoutubeIcon,
 } from 'lucide-react-native';
-import {MainMenuBottomSheet} from '~/components/menu-dialog';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 
 function MyTabBar({state, descriptors, navigation}: BottomTabBarProps) {
@@ -113,122 +112,120 @@ export default function TabLayout() {
   const navigation = useNavigation();
 
   return (
-    <MainMenuBottomSheet>
-      <Tabs
-        tabBar={MyTabBar}
-        screenOptions={{
-          tabBarActiveTintColor: NAV_THEME[colorScheme ?? 'light'].primary,
-          headerStyle: {
-            backgroundColor: NAV_THEME[colorScheme ?? 'light'].header,
-          },
-          // Correctly add tabBarStyle as an object
+    <Tabs
+      tabBar={MyTabBar}
+      screenOptions={{
+        tabBarActiveTintColor: NAV_THEME[colorScheme ?? 'light'].primary,
+        headerStyle: {
+          backgroundColor: NAV_THEME[colorScheme ?? 'light'].header,
+        },
+        // Correctly add tabBarStyle as an object
 
-          headerLeft: (props: {
+        headerLeft: (props: {
+          tintColor?: string;
+          pressColor?: string;
+          pressOpacity?: number;
+          labelVisible?: boolean;
+        }) => {
+          const _openDrawer = () => {
+            navigation.dispatch(DrawerActions.toggleDrawer());
+          };
+          return (
+            <Pressable onPress={_openDrawer} className="px-2">
+              <MenuIcon color={props.tintColor} />
+            </Pressable>
+          );
+        },
+        headerTintColor: NAV_THEME[colorScheme ?? 'light'].headerTint,
+        // headerShown: false,
+        // tabBarActiveBackgroundColor:"red",
+        // tabBarInactiveBackgroundColor:"white"
+      }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          headerRight: (props: {
             tintColor?: string;
             pressColor?: string;
             pressOpacity?: number;
             labelVisible?: boolean;
           }) => {
-            const _openDrawer = () => {
-              navigation.dispatch(DrawerActions.toggleDrawer());
-            };
             return (
-              <Pressable onPress={_openDrawer} className="px-2">
-                <MenuIcon color={props.tintColor} />
-              </Pressable>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: '/screens/notification/notification',
+                  })
+                }>
+                <Box className="z-10 ml-[12] mt-[-5] h-[10] w-[10] items-center justify-center rounded-full bg-pink">
+                  <Text className="font-normal text-[10px] color-white">
+                    {''}
+                  </Text>
+                </Box>
+                <BellIcon
+                  size={25}
+                  color={'white'}
+                  style={{marginRight: 16, marginTop: -5}}
+                />
+              </TouchableOpacity>
             );
           },
-          headerTintColor: NAV_THEME[colorScheme ?? 'light'].headerTint,
-          // headerShown: false,
-          // tabBarActiveBackgroundColor:"red",
-          // tabBarInactiveBackgroundColor:"white"
-        }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            headerRight: (props: {
-              tintColor?: string;
-              pressColor?: string;
-              pressOpacity?: number;
-              labelVisible?: boolean;
-            }) => {
-              return (
-                <TouchableOpacity
-                  onPress={() =>
-                    router.push({
-                      pathname: '/screens/notification/notification',
-                    })
-                  }>
-                  <Box className="z-10 ml-[12] mt-[-5] h-[10] w-[10] items-center justify-center rounded-full bg-pink">
-                    <Text className="font-normal text-[10px] color-white">
-                      {''}
-                    </Text>
-                  </Box>
-                  <BellIcon
-                    size={25}
-                    color={'white'}
-                    style={{marginRight: 16, marginTop: -5}}
-                  />
-                </TouchableOpacity>
-              );
-            },
-            tabBarIcon: ({color, focused, size}) => (
-              <House color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="leads"
-          options={{
-            title: 'Leads',
-            headerTitle: 'Leads',
-            tabBarIcon: ({color, focused, size}) => (
-              <BookOpen color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="task"
-          options={{
-            title: 'Tasks',
-            headerTitle: 'Tasks',
-            tabBarIcon: ({color, focused, size}) => (
-              <ListTodo color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="meeting"
-          options={{
-            title: 'Meeting',
-            headerTitle: 'Meeting',
-            tabBarIcon: ({color, focused, size}) => (
-              <Presentation color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="videos"
-          options={{
-            title: 'Videos',
-            headerTitle: 'Videos',
-            tabBarIcon: ({color, focused, size}) => (
-              <YoutubeIcon color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: 'Profile',
-            headerTitle: 'Profile',
-            tabBarIcon: ({color, focused, size}) => (
-              <UserRound color={color} strokeWidth={1.5} />
-            ),
-          }}
-        />
-      </Tabs>
-    </MainMenuBottomSheet>
+          tabBarIcon: ({color, focused, size}) => (
+            <House color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="leads"
+        options={{
+          title: 'Leads',
+          headerTitle: 'Leads',
+          tabBarIcon: ({color, focused, size}) => (
+            <BookOpen color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="task"
+        options={{
+          title: 'Tasks',
+          headerTitle: 'Tasks',
+          tabBarIcon: ({color, focused, size}) => (
+            <ListTodo color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="meeting"
+        options={{
+          title: 'Meeting',
+          headerTitle: 'Meeting',
+          tabBarIcon: ({color, focused, size}) => (
+            <Presentation color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="videos"
+        options={{
+          title: 'Videos',
+          headerTitle: 'Videos',
+          tabBarIcon: ({color, focused, size}) => (
+            <YoutubeIcon color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          headerTitle: 'Profile',
+          tabBarIcon: ({color, focused, size}) => (
+            <UserRound color={color} strokeWidth={1.5} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

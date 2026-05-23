@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useRef, useState, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
 
 // Create a context for the BottomSheet
 const BottomSheetContext = createContext(null);
@@ -34,7 +33,7 @@ export const BottomSheetProvider = ({ children }) => {
         {children}
 
         {/* BottomSheet Component */}
-        <BottomSheet
+        {/* <BottomSheet
           ref={bottomSheetRef}
           index={-1} // Initially closed
           snapPoints={snapPoints}
@@ -42,7 +41,7 @@ export const BottomSheetProvider = ({ children }) => {
           enablePanDownToClose
         >
           <View style={styles.content}>{content}</View>
-        </BottomSheet>
+        </BottomSheet> */}
       </View>
     </BottomSheetContext.Provider>
   );

@@ -172,6 +172,8 @@ export const LeadDetails = () => {
           <LeadItemDetails title="State" value={lead?.state} />
           <LeadItemDetails title="Pincode" value={lead?.pincode} />
           <LeadItemDetails title="message" value={lead?.message} />
+          <LeadItemDetails title="Remark" value={lead?.remark} />
+          <LeadItemDetails title="About You" value={lead?.aboutYou} />
           <LeadItemDetails title="totalStudent" value={lead?.totalStudent} />
           <LeadItemDetails title="referralBy" value={lead?.referralBy} />
         </Box>
@@ -187,7 +189,9 @@ export const LeadDetails = () => {
             ) : null}
             {lead?.whatsAppNumber || lead?.contact ? (
               <TouchableOpacity
-                onPress={() => sendWhatsApp(lead?.whatsAppNumber || lead?.contact)}>
+                onPress={() =>
+                  sendWhatsApp(lead?.whatsAppNumber || lead?.contact)
+                }>
                 <Icon size={40} icon="whatsapp" />
               </TouchableOpacity>
             ) : null}

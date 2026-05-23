@@ -191,6 +191,7 @@ export const LeadList = ({
       </Box>
       <TextInput
         placeholder="Search by name"
+        placeholderTextColor="#8F8F8F"
         value={searchName}
         onChangeText={setSearchName}
         className="mt-3 px-3 py-2 rounded-lg border border-border1 text-base"
@@ -201,6 +202,7 @@ export const LeadList = ({
           paddingVertical: 10,
           borderRadius: 8,
           fontSize: 16,
+          color: '#151E26',
         }}
       />
       {type === 'followup' ? (
@@ -208,7 +210,7 @@ export const LeadList = ({
           data={[
             {label: 'All', value: 'all'},
             {label: 'HIGH_FOLLOWUP', value: 'HIGH_FOLLOWUP'},
-            {label: 'MID_FOLLOWUP', value: 'MID_FOLLOWUP'},
+            {label: 'MED_FOLLOWUP', value: 'MED_FOLLOWUP'},
             {label: 'LOW_FOLLOWUP', value: 'LOW_FOLLOWUP'},
           ]}
           onSelect={selectedItem => {
@@ -297,17 +299,6 @@ export const LeadList = ({
 };
 
 const LeadItem: React.FC<{lead: Lead, _onPress: () => void}> = ({lead, _onPress}) => {
-  console.log('lead', lead, lead?.status);
-  
-  const router = useRouter();
-  const {user} = useSessionContext();
-  const isSelfLead = lead?.staffId?._id === user?._id;
-  const {
-    categorizedLeads,
-    setLeadList,
-    setSelectedLeadIndex,
-    setSelectedCategory,
-  } = useLeadStore();
   return (
     <TouchableOpacity
       onPress={_onPress}
@@ -329,11 +320,6 @@ const LeadItem: React.FC<{lead: Lead, _onPress: () => void}> = ({lead, _onPress}
           </Box>
         </Box>
         <Box className="mb-2 mr-5 mt-2">
-          {lead?.remark ? (
-            <Text className="text-sm text-graniteGray">
-              #{toUpper(lead?.remark)}
-            </Text>
-          ) : null}
           <Text className="text-md text-main font-semibold">
             {lead?.ownerName}
           </Text>
