@@ -1,7 +1,7 @@
 import {Redirect} from 'expo-router';
 import React, {useMemo, useState} from 'react';
 import {Drawer} from 'expo-router/drawer';
-import {DrawerContentScrollView} from '@react-navigation/drawer';
+import {DrawerContentScrollView} from 'expo-router/build/react-navigation/drawer';
 import {Dimensions, TouchableOpacity} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Box, VStack} from '~/components/ui/box';

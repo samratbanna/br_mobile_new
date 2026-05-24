@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Box} from '~/components/ui/box';
 import {Text} from '~/components/ui/text';
-import {Audio} from 'expo-av';
+// import {Audio} from 'expo-av';
 import {Dimensions, TouchableOpacity} from 'react-native';
 import * as Progress from 'react-native-progress';
 import {Pause, Play} from 'lucide-react-native';
@@ -21,47 +21,47 @@ export default function AudioPlayer({url}: any) {
   const [isFinished, setIsFinished] = useState(false); // New state for tracking if audio has finished
   const windowWidth = (Dimensions.get('screen').width * 60) / 100;
 
-  async function playSound() {
-    if (sound && isFinished) {
-      await sound.replayAsync();
-      setIsFinished(false);
-      setIsPlaying(true);
-    } else if (sound) {
-      await sound.playAsync();
-      setIsPlaying(true);
-    } else {
-      const {sound: newSound} = await Audio.Sound.createAsync(
-        {
-          //   uri: 'https://file-examples.com/storage/feb05093336710053a32bc1/2017/11/file_example_MP3_700KB.mp3',
-          uri: url,
-        },
-        {shouldPlay: true},
-      );
+  // async function playSound() {
+  //   if (sound && isFinished) {
+  //     await sound.replayAsync();
+  //     setIsFinished(false);
+  //     setIsPlaying(true);
+  //   } else if (sound) {
+  //     await sound.playAsync();
+  //     setIsPlaying(true);
+  //   } else {
+  //     const {sound: newSound} = await Audio.Sound.createAsync(
+  //       {
+  //         //   uri: 'https://file-examples.com/storage/feb05093336710053a32bc1/2017/11/file_example_MP3_700KB.mp3',
+  //         uri: url,
+  //       },
+  //       {shouldPlay: true},
+  //     );
 
-      setSound(newSound);
-      setIsPlaying(true);
+  //     setSound(newSound);
+  //     setIsPlaying(true);
 
-      newSound.setOnPlaybackStatusUpdate(status => {
-        if (status.isLoaded) {
-          setDurationMillis(status.durationMillis || 0);
-          setPositionMillis(status.positionMillis || 0);
+  //     newSound.setOnPlaybackStatusUpdate(status => {
+  //       if (status.isLoaded) {
+  //         setDurationMillis(status.durationMillis || 0);
+  //         setPositionMillis(status.positionMillis || 0);
 
-          // Check if the audio has finished
-          if (status.didJustFinish) {
-            setIsFinished(true); // Mark as finished
-            setIsPlaying(false); // Stop the playback
-          }
-        }
-      });
-    }
-  }
+  //         // Check if the audio has finished
+  //         if (status.didJustFinish) {
+  //           setIsFinished(true); // Mark as finished
+  //           setIsPlaying(false); // Stop the playback
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 
   const handlePauseResume = async () => {
     if (isPlaying) {
       await sound.pauseAsync();
       setIsPlaying(false);
     } else {
-      await playSound();
+      // await playSound();
     }
   };
 

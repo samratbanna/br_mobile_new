@@ -113,17 +113,10 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-      {/* <KeyboardAvoidingView
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{
-          bottom: 0,
-          width: '100%',
-          flex: 1,
-          backgroundColor: 'white',
-          flexDirection: 'row',
-        }}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0} // Adjust offset as needed
-      > */}
+        style={{flex: 1, backgroundColor: 'white'}}
+      >
       <Box className="flex-1 bg-white">
         <Box className="flex-1 bg-white">
           <Box className="flex-1 bg-white">
@@ -213,7 +206,7 @@ export default function OnboardingScreen() {
           </Box>
         </Box>
       </Box>
-      {/* </KeyboardAvoidingView> */}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

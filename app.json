@@ -2,7 +2,7 @@
   "expo": {
     "name": "BR Business App",
     "slug": "br-businessapp",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./assets/images/sl-icon.png",
@@ -14,7 +14,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "7",
+      "buildNumber": "8",
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.slexpo",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -22,7 +22,9 @@
         "aps-environment": "production"
       },
       "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       }
     },
     "android": {
@@ -32,7 +34,7 @@
       },
       "package": "in.brainrecoding.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 7
+      "versionCode": 8
     },
     "web": {
       "bundler": "metro",
@@ -42,7 +44,6 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-av",
       "expo-font",
       "expo-web-browser",
       "@react-native-firebase/app",
@@ -55,7 +56,12 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-image",
+      "expo-sharing",
+      "expo-splash-screen",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true

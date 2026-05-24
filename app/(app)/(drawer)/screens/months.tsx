@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router';
 import React, {useEffect, useRef} from 'react';
 import {FlatList, TouchableOpacity} from 'react-native';
 import {Box} from '~/components/ui/box';

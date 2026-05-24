@@ -1,6 +1,6 @@
 import React from 'react';
-import {Tabs, useRouter} from 'expo-router';
-import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import {Tabs, useRouter, useNavigation} from 'expo-router';
+import type {BottomTabBarProps} from 'expo-router/tabs';
 import {Text, Pressable, TouchableOpacity} from 'react-native';
 import {Box, HStack} from '~/components/ui/box';
 import {NAV_THEME} from '~/lib/constants';
@@ -15,7 +15,6 @@ import {
   UserRound,
   YoutubeIcon,
 } from 'lucide-react-native';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
 
 function MyTabBar({state, descriptors, navigation}: BottomTabBarProps) {
   return (
@@ -128,7 +127,7 @@ export default function TabLayout() {
           labelVisible?: boolean;
         }) => {
           const _openDrawer = () => {
-            navigation.dispatch(DrawerActions.toggleDrawer());
+            navigation.dispatch({type: 'TOGGLE_DRAWER'});
           };
           return (
             <Pressable onPress={_openDrawer} className="px-2">
