@@ -29,7 +29,7 @@ import Modal from 'react-native-modal';
 import useTailwindColors from '~/hooks/useThemeColorTailwind';
 import {useLeadStore} from '~/store/lead.store';
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
-import {Followups, LeadDemo} from '~/interfaces/lead.interface';
+import {CustomField, Followups, LeadDemo} from '~/interfaces/lead.interface';
 import EmptyScreen from '~/app/(app)/(drawer)/screens/emptyScreen';
 import {useSessionContext} from '~/providers/session/ctx';
 import {Icon} from '../navigation/TabBarIcon';
@@ -53,6 +53,10 @@ export const LeadDetails = () => {
   //
   const [callLogVisible, setcallLogVisible] = useState(false);
   const togglecallLogVisible = () => setcallLogVisible(!callLogVisible);
+  //
+  const [customFieldsVisible, setCustomFieldsVisible] = useState(false);
+  const toggleCustomFieldsVisible = () =>
+    setCustomFieldsVisible(!customFieldsVisible);
 
   const leadList = useMemo(
     () => categorizedLeads[selectedCategory],
@@ -177,6 +181,15 @@ export const LeadDetails = () => {
           <LeadItemDetails title="totalStudent" value={lead?.totalStudent} />
           <LeadItemDetails title="referralBy" value={lead?.referralBy} />
         </Box>
+        {lead?.customFields && size(lead.customFields) > 0 ? (
+          <TouchableOpacity
+            onPress={toggleCustomFieldsVisible}
+            className="mt-3 items-center self-end rounded-lg bg-main px-3 py-1.5">
+            <Text className="font-medium text-sm text-white">
+              View All Detail
+            </Text>
+          </TouchableOpacity>
+        ) : null}
         <Box className="mt-4 flex-1">
           <Box className="flex-row items-center gap-2 self-end py-3">
             {lead?.contact || lead?.whatsAppNumber ? (
@@ -306,6 +319,23 @@ export const LeadDetails = () => {
           setIsVisible={setcallLogVisible}
           lead={lead}
           refetch={refetchCallLog}
+        />
+      </Modal>
+      <Modal
+        testID={'modal'}
+        isVisible={customFieldsVisible}
+        backdropColor="#B4B3DB"
+        backdropOpacity={0.8}
+        animationIn="zoomInDown"
+        animationOut="zoomOutUp"
+        onBackdropPress={toggleCustomFieldsVisible}
+        animationInTiming={600}
+        animationOutTiming={600}
+        backdropTransitionInTiming={600}
+        backdropTransitionOutTiming={600}>
+        <CustomFieldsModal
+          toggleVisible={toggleCustomFieldsVisible}
+          customFields={lead?.customFields}
         />
       </Modal>
     </Box>
@@ -480,6 +510,41 @@ export const LeadItemDetails = ({title, value}: {title: string; value: string}) 
   ) : null;
 };
 
+export const CustomFieldsModal = ({
+  toggleVisible,
+  customFields,
+}: {
+  toggleVisible: () => void;
+  customFields?: CustomField[];
+}) => {
+  return (
+    <Box className="max-h-[80%] rounded-lg bg-white p-5">
+      <Box className="flex-row items-center justify-between">
+        <Text className="font-semibold text-xl text-main">All Details</Text>
+        <TouchableOpacity onPress={toggleVisible}>
+          <X color={'red'} />
+        </TouchableOpacity>
+      </Box>
+      <ScrollView style={{marginTop: 15}}>
+        {customFields && size(customFields) > 0 ? (
+          customFields.map((item, index) => (
+            <Box
+              key={item._id}
+              className="mb-3 border-b-[1px] border-border1 pb-3">
+              <Text className="text-graniteGray">
+                {index + 1}. {item.key?.replace(/_/g, ' ')}
+              </Text>
+              <Text className="mt-1 font-medium">{item.value}</Text>
+            </Box>
+          ))
+        ) : (
+          <Text>No details available</Text>
+        )}
+      </ScrollView>
+    </Box>
+  );
+};
+
 export const ModalContent = ({toggleVisible, udpateLeadStatus, updateLeadPending, refetch}: any) => {
   const {user} = useSessionContext();
   const {selectedLeadIndex, categorizedLeads} = useLeadStore();
@@ -503,7 +568,7 @@ export const ModalContent = ({toggleVisible, udpateLeadStatus, updateLeadPending
     onSuccess: (response: any) => {
       showSuccessToast('Followup added successfully');
       if (lead?.status === 'PENDING')
-        udpateLeadStatus({id: lead?._id, status: 'MED_FOLLOWUP'});
+        udpateLeadStatus({id: lead?._id, status: 'FOLLOWUP'});
       toggleVisible();
       //   followupList({leadId: lead?._id});
     },

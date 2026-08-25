@@ -11,6 +11,12 @@ export interface LeadResponse {
   nextPage: number;
 }
 
+export interface CustomField {
+  _id: string;
+  key: string;
+  value: string;
+}
+
 export interface Lead {
   _id: string;
   contact: string;
@@ -34,6 +40,7 @@ export interface Lead {
   updatedAt: string;
   whatsAppNumber: string;
   id: string;
+  customFields?: CustomField[];
 }
 
 export interface Followups {

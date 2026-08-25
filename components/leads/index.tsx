@@ -209,9 +209,7 @@ export const LeadList = ({
         <SelectDropdown
           data={[
             {label: 'All', value: 'all'},
-            {label: 'HIGH_FOLLOWUP', value: 'HIGH_FOLLOWUP'},
-            {label: 'MED_FOLLOWUP', value: 'MED_FOLLOWUP'},
-            {label: 'LOW_FOLLOWUP', value: 'LOW_FOLLOWUP'},
+            {label: 'FOLLOWUP', value: 'FOLLOWUP'},
           ]}
           onSelect={selectedItem => {
             setSelectedStatus(selectedItem.value);

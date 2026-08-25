@@ -121,9 +121,7 @@ export const Dashboard = () => {
         filter(
           teamDashBoardData,
           data =>
-            data?.status === LeadStatus.LOW_FOLLOW_UP ||
-            data?.status === LeadStatus.MED_FOLLOW_UP ||
-            data?.status === LeadStatus?.HIGH_FOLLOW_UP ||
+            data?.status === LeadStatus.FOLLOWUP ||
             data?.status === LeadStatus?.RINGING ||
             data?.status === LeadStatus?.NON_CONTACTABLE,
         ),

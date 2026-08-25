@@ -3,7 +3,7 @@ import apiMonitor from './Monitor';
 
 export const BASE_URL = 'https://api.brainrecoding.in/api/r1/';
 // export const BASE_URL = 'https://testapi.brainrecoding.in/api/r1/';
-// export const BASE_URL = 'http://10.149.67.115:4000/api/r1/';
+// export const BASE_URL = 'http://10.112.150.170:4000/api/r1/';
 
 let api = create({
   baseURL: BASE_URL,
