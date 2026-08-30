@@ -30,6 +30,7 @@ export const Profile = () => {
   return (
     <Box className={'flex-1 p-5'}>
       <ScrollView>
+        <OrganizationBanner />
         <AvatarImage />
         <PersonalInfo />
         <MyAttendance />
@@ -200,6 +201,49 @@ const PersonalInfo = () => {
     <Box className={'items-center p-5'}>
       <Text className="font-medium text-xl">{user?.name}</Text>
       <Text className="text-md text-graniteGray">{user?.contact}</Text>
+    </Box>
+  );
+};
+
+const OrganizationBanner = () => {
+  const {organization} = useSessionContext();
+  const colors = useTailwindColors();
+
+  if (!organization) {
+    return null;
+  }
+
+  return (
+    <Box className="mb-3 flex-row items-center rounded-lg border-[0.5px] border-border2 p-3">
+      {organization?.logo ? (
+        <Image
+          style={{
+            height: 48,
+            width: 48,
+            borderRadius: 999,
+            borderWidth: 1,
+            borderColor: colors?.border2,
+          }}
+          source={{uri: organization.logo}}
+          contentFit={'contain'}
+        />
+      ) : (
+        <Box
+          className="items-center justify-center rounded-full bg-blue"
+          style={{width: 48, height: 48}}>
+          <Text className="font-semibold text-sm text-white">
+            {getTwoCharInitials(organization?.name)}
+          </Text>
+        </Box>
+      )}
+      <Box className="ml-3 flex-1">
+        <Text className="font-medium text-lg">{organization?.name}</Text>
+        {organization?.plan ? (
+          <Text className="text-xs text-graniteGray lowercase">
+            {organization.plan}
+          </Text>
+        ) : null}
+      </Box>
     </Box>
   );
 };

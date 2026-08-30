@@ -8,6 +8,7 @@ import Header from './screens/header';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from '../../../tailwind.config.js';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useSessionContext} from '~/providers/session/ctx';
 
 const Settings:{ id: number; title: string; routeName: Href }[] = [
   {
@@ -27,11 +28,23 @@ export default function AccountSetting() {
   const fullConfig = resolveConfig(tailwindConfig);
   const {header} = fullConfig.theme.colors;
   const insets = useSafeAreaInsets();
+  const {isOrgAdmin} = useSessionContext();
+
+  const settings = isOrgAdmin
+    ? [
+        ...Settings,
+        {
+          id: 3,
+          title: 'Organization',
+          routeName: '/screens/organization' as Href,
+        },
+      ]
+    : Settings;
 
   return (
     <Box className="flex-1 bg-white" style={{marginTop: insets.top}}>
       <Header title={'Account Settings'} showNotificationIcon={true} />
-      {Settings?.map(item => (
+      {settings?.map(item => (
         <TouchableOpacity
           key={item?.id}
           className="mt-[20px] flex-row items-center justify-between px-[16px]"

@@ -2,6 +2,8 @@ import {useQuery} from '@tanstack/react-query';
 import {apiClient, URIS} from './api';
 import {compact, values} from 'lodash';
 
+export * from './organization.service';
+
 // export const useGetSchool = (config: MutationOptions) => {
 //   return useMutation({
 //     mutationKey: [URIS.SCHOOL_DETAILS],

@@ -9,8 +9,9 @@ import {
   removeAuthorizationHeader,
   setAuthorizationHeader,
 } from '~/services/api';
-import { showErrorToast } from '~/lib/Toast';
+import { showErrorToast, isOrgInactiveError } from '~/lib/Toast';
 import { useLogin } from '~/services/auth.service';
+import { fetchMyOrganization } from '~/services/organization.service';
 import { Task } from '~/interfaces/task.interface';
 import { Lead } from '~/interfaces/lead.interface';
 
@@ -21,6 +22,7 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
   const [task, setTask] = useState<Task>();
   const [lead, setLead] = useState<Lead>();
   const [onlyMyLead, setOnlyMyLead] = useState(false);
+  const [organization, setOrganization] = useState<any>(null);
 
   const logout = useCallback(() => {
     removeSecureValue('access');
@@ -28,10 +30,21 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
     removeAuthorizationHeader();
     setUser(null);
     setIsLoggedIn(false);
+    setOrganization(null);
   }, []);
 
   const setReady = useCallback(() => {
     setIsAppReady(true);
+  }, []);
+
+  // Org info is supplementary, not auth-critical — never block login on it.
+  const loadOrganization = useCallback(async () => {
+    try {
+      const org = await fetchMyOrganization();
+      setOrganization(org);
+    } catch (e) {
+      console.log('Failed to load organization', e);
+    }
   }, []);
 
   const loginComplete = useCallback((data: any) => {
@@ -42,7 +55,10 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
     saveSecureValue('refresh', refreshToken);
     setAuthorizationHeader(accessToken);
     setIsLoggedIn(true);
-  }, []);
+    loadOrganization();
+  }, [loadOrganization]);
+
+  const isOrgAdmin = !!user?.isOrgAdmin;
 
   const value = useMemo(
     () => ({
@@ -60,6 +76,8 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       setLead,
       onlyMyLead,
       setOnlyMyLead,
+      organization,
+      isOrgAdmin,
     }),
     [
       isLoggedIn,
@@ -75,6 +93,8 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
       setLead,
       onlyMyLead,
       setOnlyMyLead,
+      organization,
+      isOrgAdmin,
     ],
   );
 
@@ -88,6 +108,12 @@ export const SessionProvider = ({children}: {children?: React.ReactNode}) => {
     },
     onError: (e: any) => {
       showErrorToast(e.message);
+      // If the org was suspended after this session's last login, the
+      // silent refresh-token login fails with "Organization is inactive" —
+      // don't leave the user stuck in a dead logged-in-but-broken state.
+      if (isOrgInactiveError(e?.message)) {
+        logout();
+      }
     },
   });
 

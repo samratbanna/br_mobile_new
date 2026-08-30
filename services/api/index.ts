@@ -1,5 +1,6 @@
 import {create} from 'apisauce';
 import apiMonitor from './Monitor';
+import {showErrorToast} from '~/lib/Toast';
 
 export const BASE_URL = 'https://api.brainrecoding.in/api/r1/';
 // export const BASE_URL = 'https://testapi.brainrecoding.in/api/r1/';
@@ -16,6 +17,25 @@ let api = create({
 });
 
 __DEV__ && api.addMonitor(apiMonitor);
+
+// Global plan-limit (403) toast — runs in every build (not just __DEV__).
+// Purely a side-effect notification; it never swallows or short-circuits
+// the response, so each call site's own res.ok / throw res.data handling
+// still runs normally afterward.
+const planLimitMonitor = (response: any) => {
+  const message = response?.data?.message;
+  if (
+    response?.status === 403 &&
+    typeof message === 'string' &&
+    message.toLowerCase().includes('plan limit')
+  ) {
+    showErrorToast(
+      'Your organization has reached its plan limit. Please contact your administrator.',
+    );
+  }
+};
+
+api.addMonitor(planLimitMonitor);
 
 export const setAuthorizationHeader = (access_token: string) =>
   api.setHeader('Authorization', 'Bearer ' + access_token);
@@ -53,4 +73,5 @@ export const URIS = {
   ALL_TASK: 'tasks/all',
   TASK: 'tasks',
   USER_NOTIFICATION: 'notifications/user',
+  ORG_ME: 'organization/me',
 };

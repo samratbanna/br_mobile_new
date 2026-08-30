@@ -14,7 +14,11 @@ import {Text} from '~/components/ui/text';
 import {RequestMobileNoSchema} from '~/constants/RequestMobileNoSchema';
 import {useRouter} from 'expo-router';
 import {useGetOtp} from '~/services';
-import {showErrorToast} from '~/lib/Toast';
+import {
+  showErrorToast,
+  isOrgInactiveError,
+  ORG_INACTIVE_MESSAGE,
+} from '~/lib/Toast';
 import Constants from 'expo-constants';
 interface ManifestExtra {
   appLogo: string;
@@ -45,8 +49,12 @@ export default function MobileLogin() {
         });
       }
     },
-    onError: () => {
-      showErrorToast('FAILED TO SEND OTP');
+    onError: (e: any) => {
+      if (isOrgInactiveError(e?.message)) {
+        showErrorToast(ORG_INACTIVE_MESSAGE);
+      } else {
+        showErrorToast('FAILED TO SEND OTP');
+      }
     },
   });
 

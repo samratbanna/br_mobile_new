@@ -13,7 +13,12 @@ import {Text} from '~/components/ui/text';
 import {useSessionContext} from '~/providers/session/ctx';
 import {useLogin} from '~/services/auth.service';
 import {useForm, Controller} from 'react-hook-form';
-import {showErrorToast, showSuccessToast} from '~/lib/Toast';
+import {
+  showErrorToast,
+  showSuccessToast,
+  isOrgInactiveError,
+  ORG_INACTIVE_MESSAGE,
+} from '~/lib/Toast';
 import {iconRegistry} from '~/components/navigation/TabBarIcon';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {RequestLoginSchema} from '~/constants/RequestLoginSchema';
@@ -45,7 +50,11 @@ export default function LoginScreen() {
       }
     },
     onError: (e: any) => {
-      showErrorToast(e);
+      if (isOrgInactiveError(e?.message)) {
+        showErrorToast(ORG_INACTIVE_MESSAGE);
+      } else {
+        showErrorToast(e);
+      }
     },
   });
 

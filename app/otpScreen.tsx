@@ -11,7 +11,12 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import OTPTextInput from 'react-native-otp-textinput';
 import {useGetOtp, useVerifyOtp} from '~/services';
-import {showErrorToast, showSuccessToast} from '~/lib/Toast';
+import {
+  showErrorToast,
+  showSuccessToast,
+  isOrgInactiveError,
+  ORG_INACTIVE_MESSAGE,
+} from '~/lib/Toast';
 import {useSessionContext} from '~/providers/session/ctx';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CircleHelp} from 'lucide-react-native';
@@ -33,8 +38,12 @@ export default function OtpScreen() {
       setToken(data?.token);
       showSuccessToast('OTP SENT');
     },
-    onError: () => {
-      showErrorToast('FAILED TO SEND OTP');
+    onError: (e: any) => {
+      if (isOrgInactiveError(e?.message)) {
+        showErrorToast(ORG_INACTIVE_MESSAGE);
+      } else {
+        showErrorToast('FAILED TO SEND OTP');
+      }
     },
   });
 
@@ -44,8 +53,12 @@ export default function OtpScreen() {
       showSuccessToast('Verified');
       router.navigate('/loading');
     },
-    onError: e => {
-      showErrorToast('Verification failed');
+    onError: (e: any) => {
+      if (isOrgInactiveError(e?.message)) {
+        showErrorToast(ORG_INACTIVE_MESSAGE);
+      } else {
+        showErrorToast('Verification failed');
+      }
     },
   });
 
